@@ -142,7 +142,7 @@ const Login = () => {
                 Demo Credentials 🎮
               </Text>
               <Text size="xs" c="dimmed" ta="center">
-                Username: alex_teen | Password: password123
+                Email: svarakasliwal@gmail.com | Password: Svara@13
               </Text>
             </Box>
           </Paper>
