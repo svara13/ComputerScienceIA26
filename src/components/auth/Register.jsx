@@ -18,6 +18,7 @@ import {
 import { useForm } from '@mantine/form';
 import { IconAlertCircle, IconUserPlus, IconSparkles } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
+import { notifications } from '@mantine/notifications';
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,9 @@ const Register = () => {
       password: (value) => {
         if (!value) return 'Password is required';
         if (value.length < 6) return 'Password must be at least 6 characters';
+        if (!/[A-Z]/.test(value)) return 'Password must contain at least one uppercase letter';
+        if (!/[0-9]/.test(value)) return 'Password must contain at least one number';
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) return 'Password must contain at least one special character';
         return null;
       },
       confirmPassword: (value, values) =>
@@ -63,8 +67,15 @@ const Register = () => {
     try {
       const { confirmPassword, ...userData } = values;
       const result = await register(userData);
-      if (result.success) {
-        navigate('/');
+      console.log(result)
+      if (result?.user?.created_at) {
+        notifications.show({
+          title: 'Verification Email Sent!',
+          message: 'You will receive an email shortly. Please click the link to verify your account.',
+          color: 'teal',
+          autoClose: 4000,
+        });
+        setTimeout(() => navigate('/login'), 4000); // Wait 4 seconds then redirect
       } else {
         setError(result.error);
       }

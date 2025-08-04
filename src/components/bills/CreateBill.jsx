@@ -183,6 +183,13 @@ const CreateBill = () => {
   };
 
   const totalAmount = items.reduce((sum, item) => sum + (item.cost || 0), 0);
+ const customSplitTotal = Object.values(form.values.splits).reduce(
+  (sum, val) => sum + (typeof val === 'number' && !isNaN(val) ? val : 0),
+  0
+);
+
+const isCustomSplitValid =
+  splitType === 'even' || customSplitTotal <= totalAmount;
 
   return (
     <Container size="md">
@@ -200,6 +207,34 @@ const CreateBill = () => {
             <IconSparkles size="1rem" style={{ verticalAlign: 'middle' }} />
           </Text>
         </Box>
+        {friends.length === 0 && (
+          <Card
+            padding="lg"
+            radius="xl"
+            shadow="md"
+            withBorder
+            mb="xl"
+            style={{ backgroundColor: '#fff7ed', borderColor: '#f97316' }}
+          >
+            <Stack gap="sm">
+              <Title order={4} style={{ color: '#ea580c' }}>
+                No Friends Added Yet 😔
+              </Title>
+              <Text c="dimmed">
+                To create a bill, you need to add at least one friend. Head over to your profile to add some!
+              </Text>
+              <Button
+                color="orange"
+                radius="lg"
+                onClick={() => navigate('/profile')}
+                leftSection={<IconUsers size="1rem" />}
+                style={{ alignSelf: 'flex-start' }}
+              >
+                Go to Profile
+              </Button>
+            </Stack>
+          </Card>
+        )}
 
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="xl">
@@ -352,7 +387,11 @@ const CreateBill = () => {
                     </Badge>
                   )}
                 </Group>
-
+                {!isCustomSplitValid && (
+                  <Text color="red" size="sm">
+                    ⚠️ Custom split total (${customSplitTotal.toFixed(2)}) must equal total bill (${totalAmount.toFixed(2)}).
+                  </Text>
+                )}
                 {splitType === 'custom' && form.values.selectedFriends.length > 0 && (
                   <Stack mt="md">
                     <Text fw={500} c="dimmed">
@@ -394,9 +433,21 @@ const CreateBill = () => {
                 size="lg"
                 radius="xl"
                 leftSection={<IconCalculator size="1.2rem" />}
+                disabled={friends.length === 0 || !isCustomSplitValid}
                 style={{
-                  background: 'linear-gradient(45deg, #10b981, #059669)',
-                  minWidth: '200px'
+                  minWidth: '200px',
+                  background:
+                    friends.length === 0 || !isCustomSplitValid
+                      ? '#d1d5db' // gray-300
+                      : 'linear-gradient(45deg, #10b981, #059669)',
+                  color:
+                    friends.length === 0 || !isCustomSplitValid
+                      ? '#6b7280' // gray-500
+                      : 'white',
+                  cursor:
+                    friends.length === 0 || !isCustomSplitValid
+                      ? 'not-allowed'
+                      : 'pointer',
                 }}
               >
                 Create Bill 🎉

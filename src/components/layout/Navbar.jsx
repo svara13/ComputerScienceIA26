@@ -102,14 +102,14 @@ const Navbar = () => {
                 color: '#ffffff'
               }}
             >
-              {user?.name?.charAt(0).toUpperCase()}
+              {user?.user_metadata?.full_name?.charAt(0).toUpperCase()}
             </Avatar>
             <Box style={{ flex: 1 }}>
               <Text size="sm" fw={500} style={{ color: '#1e293b' }}>
-                {user?.name}
+                {user?.user_metadata?.full_name}
               </Text>
               <Text size="xs" c="dimmed">
-                @{user?.username}
+                @{user?.user_metadata?.username}
               </Text>
             </Box>
           </Group>
